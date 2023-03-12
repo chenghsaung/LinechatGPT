@@ -13,8 +13,12 @@ from linebot.models import *
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
-line_bot_api = LineBotApi(os.getenv("LINE_API_KEY"))
-handler = WebhookHandler(os.getenv("LINE_CHANEL_SECRET"))
+
+channel_access_token = os.getenv("LINE_CHANNEL_ACCESS_TOKEN", None)
+channel_secret = os.getenv('LINE_CHANNEL_SECRET',  None)
+
+line_bot_api = LineBotApi(channel_access_token)
+handler = WebhookHandler(channel_secret)
 
 @app.route("/", methods=("GET", "POST"))
 def root():

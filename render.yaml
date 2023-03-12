@@ -12,3 +12,5 @@ services:
     sync: false
   - key: LINE_CHANNEL_SECRET
     sync: false
+  - key: OPENAI_API_KEY
+    sync: false
