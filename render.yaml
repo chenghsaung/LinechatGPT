@@ -3,5 +3,12 @@ services:
   name: LinechatGPT
   env: python
   repo: https://github.com/chenghsaung/LinechatGPT.git
-  buildCommand: cd examples/flask-echo;pip install gunicorn -r requirements.txt
-  startCommand: cd examples/flask-echo;gunicorn app:app
+  buildCommand: pip install gunicorn -r requirements.txt
+  startCommand: gunicorn app:app
+  plan: free
+  autoDeploy: false
+  envVars:
+  - key: LINE_CHANNEL_ACCESS_TOKEN
+    sync: false
+  - key: LINE_CHANNEL_SECRET
+    sync: false
