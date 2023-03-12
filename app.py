@@ -48,6 +48,7 @@ def handle_message(event):
             prompt=event.message.text,
             temperature=0.6,
         )
+    print(f"response=\n{response}")
     message_init = TextSendMessage(text=response.choices[0].text)
     line_bot_api.reply_message(event.reply_token, message_init)
 
