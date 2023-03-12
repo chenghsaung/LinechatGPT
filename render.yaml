@@ -1,0 +1,7 @@
+services:
+- type: web
+  name: LinechatGPT
+  env: python
+  repo: https://github.com/chenghsaung/LinechatGPT.git
+  buildCommand: cd examples/flask-echo;pip install gunicorn -r requirements.txt
+  startCommand: cd examples/flask-echo;gunicorn app:app
