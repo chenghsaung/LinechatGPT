@@ -47,6 +47,9 @@ def handle_message(event):
             model="text-davinci-002",
             prompt=event.message.text,
             temperature=0.6,
+            max_tokens=300,
+            presence_penalty=0,
+            frequency_penalty=0
         )
     print(f"response=\n{response}")
     message_init = TextSendMessage(text=response.choices[0].text)
