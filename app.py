@@ -40,9 +40,38 @@ def callback():
         abort(400)
     return 'OK'
 
+button_template_message =ButtonsTemplate(
+                            thumbnail_image_url="https://i.imgur.com/i8tEmlY.jpg",
+                            title='哼！', 
+                            text='選擇動作',
+                            ratio="1.51:1",
+                            image_size="cover",
+                            actions=[
+#                                PostbackTemplateAction 點擊選項後，
+#                                 除了文字會顯示在聊天室中，
+#                                 還回傳data中的資料，可
+#                                 此類透過 Postback event 處理。
+                                PostbackTemplateAction(
+                                    label='填單', 
+                                    text='填單',
+                                    data='action=buy&itemid=1'
+                                ),
+                                # MessageTemplateAction(
+                                #     label='填單', text='填單'
+                                # ),
+                                URITemplateAction(
+                                    label='巴哈楓之谷m', uri='https://forum.gamer.com.tw/B.php?bsn=29461'
+                                ),
+                                URITemplateAction(
+                                    label='楓之谷m官方臉書粉絲團', uri='https://www.facebook.com/TW.PlayMapleM/?epa=SEARCH_BOX'
+                                )
+                            ]
+                        )
+
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    
+    if event.message.text == "Hi":
+        line_bot_api.reply_message(event.reply_token, TemplateSendMessage(alt_text="Template Example", template=button_template_message))
     response = openai.Completion.create(
             model="text-davinci-002",
             prompt=event.message.text,
