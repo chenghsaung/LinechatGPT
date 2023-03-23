@@ -56,14 +56,14 @@ button_template_message =ButtonsTemplate(
                                     text='填單',
                                     data='action=buy&itemid=1'
                                 ),
-                                # MessageTemplateAction(
-                                #     label='填單', text='填單'
-                                # ),
                                 URITemplateAction(
-                                    label='巴哈楓之谷m', uri='https://forum.gamer.com.tw/B.php?bsn=29461'
+                                    label='chatGPT web chat', uri='https://chat.openai.com/chat'
                                 ),
                                 URITemplateAction(
-                                    label='楓之谷m官方臉書粉絲團', uri='https://www.facebook.com/TW.PlayMapleM/?epa=SEARCH_BOX'
+                                    label='chatGPT API 文件', uri='https://platform.openai.com/docs/api-reference'
+                                ),
+                                URITemplateAction(
+                                    label='chatGPT examples', uri='https://platform.openai.com/examples'
                                 )
                             ]
                         )
@@ -72,6 +72,7 @@ button_template_message =ButtonsTemplate(
 def handle_message(event):
     if event.message.text == "Hi":
         line_bot_api.reply_message(event.reply_token, TemplateSendMessage(alt_text="Template Example", template=button_template_message))
+        return
     response = openai.Completion.create(
             model="text-davinci-002",
             prompt=event.message.text,
