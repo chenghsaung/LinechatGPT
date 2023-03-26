@@ -74,16 +74,17 @@ def handle_message(event):
   if event.message.text == "/選單":
     line_bot_api.reply_message(
       event.reply_token,
-      TemplateSendMessage(alt_text="chatgpt相關網頁",
+      TemplateSendMessage(alt_text="chatGPT相關網頁",
                           template=button_template_message))
   elif event.message.text == "/指令":
     line_bot_api.reply_message(
       event.reply_token,
-      TextMessage(text=emoji.emojize("以下是機器人支援的指令:\n" +
-                  "/角色 :arrow_right:告訴機器人他是什麼角色，有助於產生更好的結果，例如:/角色 你是一位專業股票分析師\n" +
-                  "/圖片 :arrow_right:依照條件產出圖片，例如:/圖片 給我一張海邊風景圖\n" +
-                  "/清除 :arrow_right:讓機器人忘掉之前的對話\n" +
-                  "/選單 :arrow_right:叫出功能選單",language='alias')))
+      TextMessage(text=emoji.emojize(
+        "以下是機器人支援的指令:\n" +
+        "/角色 :arrow_right:告訴機器人他是什麼角色，有助於產生更好的結果，例如:/角色 你是一位專業股票分析師\n" +
+        "/圖片 :arrow_right:依照條件產出圖片，例如:/圖片 給我一張海邊風景圖\n" +
+        "/清除 :arrow_right:讓機器人忘掉之前的對話\n" + "/選單 :arrow_right:叫出功能選單",
+        language='alias')))
   elif event.message.text.startswith("/角色"):
     prompt = event.message.text[3:]
     prompts._change_system(user_id=user_id, data=prompt)
