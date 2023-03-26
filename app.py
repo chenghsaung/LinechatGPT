@@ -1,6 +1,7 @@
 import os
 import re
 import openai
+import emoji
 from flask import Flask, request, abort
 from src.completion_handler import completion_heandler
 
@@ -54,7 +55,7 @@ button_template_message = ButtonsTemplate(
     #                                 除了文字會顯示在聊天室中，
     #                                 還回傳data中的資料，可
     #                                 此類透過 Postback event 處理。
-    URITemplateAction(label='chatgpt指令大全',
+    URITemplateAction(label='chatGPT指令大全',
                       uri='https://www.explainthis.io/zh-hant/chatgpt'),
     URITemplateAction(label='chatGPT web chat',
                       uri='https://chat.openai.com/chat'),
@@ -78,9 +79,11 @@ def handle_message(event):
   elif event.message.text == "/指令":
     line_bot_api.reply_message(
       event.reply_token,
-      TextMessage(text="以下是機器人支援的指令:\n" +
-                  "/角色 =>告訴機器人他是什麼角色，有助於產生更好的結果，例如:/角色 你是一位專業股票分析師\n" +
-                  "/圖片 =>依照條件產出圖片，例如:/圖片 給我一張海邊風景圖\n" + "/清除 =>讓機器人忘掉之前的對話\n"))
+      TextMessage(text=emoji.emojize("以下是機器人支援的指令:\n" +
+                  "/角色 :arrow_right:告訴機器人他是什麼角色，有助於產生更好的結果，例如:/角色 你是一位專業股票分析師\n" +
+                  "/圖片 :arrow_right:依照條件產出圖片，例如:/圖片 給我一張海邊風景圖\n" +
+                  "/清除 :arrow_right:讓機器人忘掉之前的對話\n" +
+                  "/選單 :arrow_right:叫出功能選單",language='alias')))
   elif event.message.text.startswith("/角色"):
     prompt = event.message.text[3:]
     prompts._change_system(user_id=user_id, data=prompt)
