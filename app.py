@@ -74,17 +74,30 @@ def handle_message(event):
       event.reply_token,
       TemplateSendMessage(alt_text="Template Example",
                           template=button_template_message))
-  elif event.message.text == "指令":
+  elif event.message.text == "/指令":
     line_bot_api.reply_message(
       event.reply_token,
       TextMessage(text="以下是機器人支援的指令:\n" +
-                  "/角色 =>告訴機器人他是什麼角色，有助於產生更好的結果，例如:/system 你是一位專業股票分析師\n"))
+                  "/角色 =>告訴機器人他是什麼角色，有助於產生更好的結果，例如:/角色 你是一位專業股票分析師\n" +
+                  "/圖片 =>依照條件產出圖片，例如:/圖片 給我一張海邊風景圖\n" + "/清除 =>讓機器人忘掉之前的對話\n"))
   elif event.message.text.startswith("/角色"):
-    prompt = event.message.text[7:]
+    prompt = event.message.text[3:]
     prompts._change_system(user_id=user_id, data=prompt)
     line_bot_api.reply_message(event.reply_token, TextMessage(text="角色設定完成!"))
 
-
+  elif event.message.text.startswith("/圖片"):
+    prompt = event.message.text[3:]
+    prompts._append(user_id=user_id, role="user", content=prompt)
+    resp = openai.Image.create(prompt=prompt, n=1, size="1024x1024")
+    image_url = resp['data'][0]['url']
+    msg = ImageSendMessage(original_content_url=image_url,
+                           preview_image_url=image_url)
+    line_bot_api.reply_message(event.reply_token, msg)
+    prompts._append(user_id=user_id, role="assistant", content=image_url)
+  elif event.message.text.startswith("/清除"):
+    prompt = event.message.text[3:]
+    prompts._clear(user_id=user_id)
+    line_bot_api.reply_message(event.reply_token, TextMessage(text="忘記了"))
   else:
     prompts._append(user_id=user_id, role="user", content=event.message.text)
     print("====for debug=======")
