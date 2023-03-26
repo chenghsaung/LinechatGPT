@@ -1,7 +1,8 @@
 import os
 import re
 import openai
-from flask import Flask, redirect, render_template, request, url_for, abort
+from flask import Flask, request, abort
+from src.completion_handler import completion_heandler
 
 from linebot import (
     LineBotApi, WebhookHandler
@@ -19,6 +20,9 @@ channel_secret = os.getenv('LINE_CHANNEL_SECRET',  None)
 
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
+
+prompts = completion_heandler(system_message="You are a helpful assistant.", message_count=5)
+msg_management = {}
 
 @app.route("/", methods=("GET", "POST"))
 def root():
@@ -70,20 +74,33 @@ button_template_message =ButtonsTemplate(
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    user_id = event.source.user_id
+    prompts._initinalize(user_id=user_id)
+    print(f"user: {user_id}, message: {event.message.text}")
     if event.message.text == "Hi":
         line_bot_api.reply_message(event.reply_token, TemplateSendMessage(alt_text="Template Example", template=button_template_message))
-        return
-    response = openai.Completion.create(
-            model="text-davinci-002",
-            prompt=event.message.text,
-            temperature=0.6,
-            max_tokens=300,
-            presence_penalty=0,
-            frequency_penalty=0
+    elif event.message.text == "指令":
+        line_bot_api.reply_message(event.reply_token, TextMessage(text=
+                                                                  "以下是機器人支援的指令:\n"+
+                                                                  "/system =>告訴機器人他是什麼角色，有助於產生更好的結果，例如:/system 你是一位專業股票分析師\n"))
+    elif event.message.text.startswith("/system"):
+        prompt = event.message.text[7:]
+        prompts._change_system(user_id=user_id, data=prompt)
+        line_bot_api.reply_message(event.reply_token,TextMessage(text="角色設定完成!"))
+
+    else:
+        prompts._append(user_id=openai.api_key, role="user", content=event.message.text)
+        resp = openai.ChatCompletion.create(
+            model = 'gpt-3.5-turbo',
+            messages = prompts._output_messages()
         )
-    print(f"response=\n{response}")
-    message_init = TextSendMessage(text=response.choices[0].text)
-    line_bot_api.reply_message(event.reply_token, message_init)
+
+        prompts._append(user_id=openai.api_key, role="assistant", content=resp['choices'][0]['message']['content'])
+        line_bot_api.reply_message(event.reply_token,TextMessage(text=resp['choices'][0]['message']['content']))
+
+@app.route("/", methods=['GET'])
+def home():
+    return 'Hello World'
 
 if __name__ == '__main__':
     app.run(debug=True, port=33507)
