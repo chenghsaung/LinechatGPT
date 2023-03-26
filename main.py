@@ -45,7 +45,7 @@ def callback():
 
 button_template_message = ButtonsTemplate(
   thumbnail_image_url="https://i.imgur.com/i8tEmlY.jpg",
-  title='哼！',
+  title='chatgpt相關網頁',
   text='選擇動作',
   ratio="1.51:1",
   image_size="cover",
@@ -54,7 +54,8 @@ button_template_message = ButtonsTemplate(
     #                                 除了文字會顯示在聊天室中，
     #                                 還回傳data中的資料，可
     #                                 此類透過 Postback event 處理。
-    PostbackTemplateAction(label='填單', text='填單', data='action=buy&itemid=1'),
+    URITemplateAction(label='chatgpt指令大全',
+                      uri='https://www.explainthis.io/zh-hant/chatgpt'),
     URITemplateAction(label='chatGPT web chat',
                       uri='https://chat.openai.com/chat'),
     URITemplateAction(label='chatGPT API 文件',
@@ -69,10 +70,10 @@ def handle_message(event):
   user_id = event.source.user_id
 
   print(f"user: {user_id}, message: {event.message.text}")
-  if event.message.text == "Hi":
+  if event.message.text == "/選單":
     line_bot_api.reply_message(
       event.reply_token,
-      TemplateSendMessage(alt_text="Template Example",
+      TemplateSendMessage(alt_text="chatgpt相關網頁",
                           template=button_template_message))
   elif event.message.text == "/指令":
     line_bot_api.reply_message(
@@ -88,7 +89,7 @@ def handle_message(event):
   elif event.message.text.startswith("/圖片"):
     prompt = event.message.text[3:]
     prompts._append(user_id=user_id, role="user", content=prompt)
-    resp = openai.Image.create(prompt=prompt, n=1, size="1024x1024")
+    resp = openai.Image.create(prompt=prompt, n=1, size="512x512")
     image_url = resp['data'][0]['url']
     msg = ImageSendMessage(original_content_url=image_url,
                            preview_image_url=image_url)
