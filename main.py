@@ -88,7 +88,7 @@ def handle_message(event):
   elif event.message.text.startswith("/角色"):
     prompt = event.message.text[3:]
     prompts._change_system(user_id=user_id, data=prompt)
-    msg = TextMessage(text=msg)
+    msg = TextMessage(text="設定完成!")
     line_bot_api.reply_message(event.reply_token, msg)
 
   elif event.message.text.startswith("/圖片"):
