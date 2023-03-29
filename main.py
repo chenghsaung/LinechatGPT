@@ -4,6 +4,7 @@ import openai
 import emoji
 from flask import Flask, request, abort
 from src.completion_handler import completion_heandler
+from src.configs import DEVELOPE_MODE
 
 from linebot import (LineBotApi, WebhookHandler)
 from linebot.exceptions import (InvalidSignatureError)
@@ -83,7 +84,8 @@ def handle_message(event):
         "以下是機器人支援的指令:\n" +
         "/角色 :arrow_right:告訴機器人他是什麼角色，有助於產生更好的結果，例如:/角色 你是一位專業股票分析師\n" +
         "/圖片 :arrow_right:依照條件產出圖片，例如:/圖片 給我一張海邊風景圖\n" +
-        "/清除 :arrow_right:讓機器人忘掉之前的對話\n" + "/選單 :arrow_right:叫出功能選單",
+        "/清除 :arrow_right:讓機器人忘掉之前的對話\n" + "/選單 :arrow_right:叫出功能選單"+
+        "/開發者模式 :arrow_right:...",
         language='alias'))
   elif event.message.text.startswith("/角色"):
     prompt = event.message.text[3:]
@@ -93,6 +95,7 @@ def handle_message(event):
 
   elif event.message.text.startswith("/圖片"):
     prompt = event.message.text[3:]
+    prompts += ", 4k"
     prompts._append(user_id=user_id, role="user", content=prompt)
     resp = openai.Image.create(prompt=prompt, n=1, size="512x512")
     image_url = resp['data'][0]['url']
@@ -104,6 +107,18 @@ def handle_message(event):
     prompt = event.message.text[3:]
     prompts._clear(user_id=user_id)
     msg = TextMessage(text="忘記了!")
+  elif event.message.text.startwith("/開發者模式"):
+    prompt = DEVELOPE_MODE
+    prompts._append(user_id=user_id, role="user", content=event.message.text)
+    print(
+      f"after _append, message = {prompts._output_messages(user_id=user_id)}")
+    resp = openai.ChatCompletion.create(
+      model='gpt-3.5-turbo',
+      messages=prompts._output_messages(user_id=user_id))
+    msg = TextMessage(text=resp['choices'][0]['message']['content'])
+    prompts._append(user_id=user_id,
+                    role="assistant",
+                    content=resp['choices'][0]['message']['content'])
   else:
     prompts._append(user_id=user_id, role="user", content=event.message.text)
     print("====for debug=======")
