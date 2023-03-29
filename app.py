@@ -4,7 +4,7 @@ import openai
 import emoji
 from flask import Flask, request, abort
 from src.completion_handler import completion_heandler
-from src.configs import DEVELOPE_MODE
+from src.configs import DEVELOPE_MODE_STRING
 
 from linebot import (LineBotApi, WebhookHandler)
 from linebot.exceptions import (InvalidSignatureError)
