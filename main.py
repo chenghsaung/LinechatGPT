@@ -107,8 +107,8 @@ def handle_message(event):
     prompt = event.message.text[3:]
     prompts._clear(user_id=user_id)
     msg = TextMessage(text="忘記了!")
-  elif event.message.text.startwith("/開發者模式"):
-    prompt = DEVELOPE_MODE
+  elif event.message.text.startswith("/開發者模式"):
+    prompt = DEVELOPE_MODE_STRING
     prompts._append(user_id=user_id, role="user", content=event.message.text)
     print(
       f"after _append, message = {prompts._output_messages(user_id=user_id)}")
