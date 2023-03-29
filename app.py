@@ -84,7 +84,7 @@ def handle_message(event):
         "以下是機器人支援的指令:\n" +
         "/角色 :arrow_right:告訴機器人他是什麼角色，有助於產生更好的結果，例如:/角色 你是一位專業股票分析師\n" +
         "/圖片 :arrow_right:依照條件產出圖片，例如:/圖片 給我一張海邊風景圖\n" +
-        "/清除 :arrow_right:讓機器人忘掉之前的對話\n" + "/選單 :arrow_right:叫出功能選單"+
+        "/清除 :arrow_right:讓機器人忘掉之前的對話\n" + "/選單 :arrow_right:叫出功能選單\n"+
         "/開發者模式 :arrow_right:...",
         language='alias'))
   elif event.message.text.startswith("/角色"):
