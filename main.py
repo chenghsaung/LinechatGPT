@@ -95,7 +95,7 @@ def handle_message(event):
 
   elif event.message.text.startswith("/圖片"):
     prompt = event.message.text[3:]
-    prompts += ", 4k"
+    prompt += ", 4k"
     prompts._append(user_id=user_id, role="user", content=prompt)
     resp = openai.Image.create(prompt=prompt, n=1, size="512x512")
     image_url = resp['data'][0]['url']
@@ -109,7 +109,7 @@ def handle_message(event):
     msg = TextMessage(text="忘記了!")
   elif event.message.text.startswith("/開發者模式"):
     prompt = DEVELOPE_MODE_STRING
-    prompts._append(user_id=user_id, role="user", content=event.message.text)
+    prompts._append(user_id=user_id, role="user", content=prompt)
     print(
       f"after _append, message = {prompts._output_messages(user_id=user_id)}")
     resp = openai.ChatCompletion.create(
