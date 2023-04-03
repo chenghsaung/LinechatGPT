@@ -8,3 +8,5 @@ urllib3==1.26.7
 Werkzeug==2.0.2
 line-bot-sdk
 emoji
+youtube_transcript_api
+pytube

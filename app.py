@@ -4,7 +4,8 @@ import openai
 import emoji
 from flask import Flask, request, abort
 from src.completion_handler import completion_heandler
-from src.configs import DEVELOPE_MODE_STRING
+from src.configs import DEVELOPE_MODE_STRING, SUMMARY_ASSISTANT_STRING
+from src.youtube_handler import YT_handler
 
 from linebot import (LineBotApi, WebhookHandler)
 from linebot.exceptions import (InvalidSignatureError)
@@ -119,6 +120,23 @@ def handle_message(event):
     prompts._append(user_id=user_id,
                     role="assistant",
                     content=resp['choices'][0]['message']['content'])
+  elif event.message.text.startswith("/影片總結"):
+    url = event.message.text[5:]
+    y = YT_handler(url)
+    y.download()
+    audio_file = open("audio.mp4", "rb")
+    transcript = openai.Audio.transcribe("whisper-1", audio_file)
+    prompt = SUMMARY_ASSISTANT_STRING + " 下面是一個 Youtube 影片的部分字幕： \"\"\"{}\"\"\" \n\n請總結出這部影片的重點與一些細節，字數約 100 字左右".format(transcript[:100])
+    prompts._append(user_id=user_id, role="user", content=event.message.text)
+    resp = openai.ChatCompletion.create(
+      model='gpt-3.5-turbo',
+      messages=prompts._output_messages(user_id=user_id))
+    msg = TextMessage(text=resp['choices'][0]['message']['content'])
+    prompts._append(user_id=user_id,
+                    role="assistant",
+                    content=resp['choices'][0]['message']['content'])
+  
+    line_bot_api.reply_message(event.reply_token, msg)
   else:
     prompts._append(user_id=user_id, role="user", content=event.message.text)
     print("====for debug=======")
