@@ -101,8 +101,9 @@ def handle_message(event):
         prompt = event.message.text[3:]
         prompt += ", 4k"
         prompts._append(user_id=user_id, role="user", content=prompt)
-        resp = openai.Image.create(prompt=prompt, n=1, size="512x512")
-        image_url = resp['data'][0]['url']
+        resp = openai.images.generate(
+            prompt=prompt, n=1, size="512x512", model="dall-e-3")
+        image_url = resp.data[0].url
         msg = ImageSendMessage(original_content_url=image_url,
                                preview_image_url=image_url)
         prompts._append(user_id=user_id, role="assistant", content=image_url)
